@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PoliSport Book - Sistem Tempahan Peralatan & Kemudahan JSKK</title>
+  <meta name="description" content="Sistem tempahan kemudahan dan peralatan sukan Jabatan Sukan, Kokurikulum & Kebudayaan Politeknik Sandakan Sabah.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 1. LOGIN CARD OVERLAY -->
+  <div id="login-overlay" class="login-overlay">
+    <div class="login-card">
+      <div class="login-card-header">
+        <div style="font-size: 2.2rem; margin-bottom: 8px;">🏅</div>
+        <h2 style="font-weight: 800; letter-spacing: -0.5px;">POLISPORT BOOK</h2>
+        <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); margin-top: 4px;">Politeknik Sandakan Sabah (JSKK)</p>
+      </div>
+      <div class="login-tabs">
+        <button class="login-tab active" id="tab-login-pengguna" onclick="selectLoginRole('pengguna')">Pelajar / Staf</button>
+        <button class="login-tab" id="tab-login-admin" onclick="selectLoginRole('admin')">Penyelaras JSKK</button>
+      </div>
+      <div class="login-card-body">
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label id="login-id-label" for="login-ic">No. Kad Pengenalan (12 Digit)</label>
+            <input type="text" id="login-ic" class="form-control" placeholder="Contoh: 050101121234" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Kata Laluan</label>
+            <input type="password" id="login-password" class="form-control" placeholder="Kata Laluan Anda" required autocomplete="current-password">
+          </div>
+          <div id="login-error-msg" style="color: var(--danger-orange); font-size: 0.8rem; font-weight: 700; margin-bottom: 16px; display: none;"></div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px;">
+            Log Masuk Sistem 🔑
+          </button>
+        </form>
+        <div style="margin-top: 20px; text-align: center; font-size: 0.75rem; color: var(--body-muted);">
+          Tip: Pelajar boleh menggunakan <strong>050101121234</strong> / <strong>sukan123</strong> untuk log masuk. Admin boleh menggunakan <strong>admin</strong> / <strong>admin123</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN APPLICATION CONTAINER -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo-section">
+        <div class="logo-icon">P</div>
+        <span class="logo-text">PoliSport</span>
+      </div>
+
+      <div class="user-profile-badge">
+        <div class="user-avatar" id="avatar-char">U</div>
+        <div class="user-info">
+          <div class="user-name" id="user-display-name">Pelajar PSS</div>
+          <div class="user-role" id="user-display-role">Pengguna</div>
+        </div>
+      </div>
+      
+      <nav class="nav-links">
+        <!-- Student/Staff Links -->
+        <li class="nav-item nav-role-link role-link-pengguna active" id="nav-dashboard-pengguna" onclick="switchTab('dashboard-pengguna')">
+          <a href="#">🏠 Papan Pemuka</a>
+        </li>
+        <li class="nav-item nav-role-link role-link-pengguna" id="nav-tempahan-kemudahan" onclick="switchTab('tempahan-kemudahan')">
+          <a href="#">⚽ Tempahan Gelanggang</a>
+        </li>
+        <li class="nav-item nav-role-link role-link-pengguna" id="nav-tempahan-peralatan" onclick="switchTab('tempahan-peralatan')">
+          <a href="#">🏸 Pinjam Peralatan</a>
+        </li>
+        <li class="nav-item nav-role-link role-link-pengguna" id="nav-sejarah-pengguna" onclick="switchTab('sejarah-pengguna')">
+          <a href="#">📋 Rekod & Sejarah</a>
+        </li>
+
+        <!-- Penyelaras JSKK Admin Links -->
+        <li class="nav-item nav-role-link role-link-admin" id="nav-admin-dashboard" onclick="switchTab('admin-dashboard')">
+          <a href="#">📊 Kelulusan Tempahan</a>
+        </li>
+        <li class="nav-item nav-role-link role-link-admin" id="nav-admin-inventori" onclick="switchTab('admin-inventori')">
+          <a href="#">⚙️ Inventori & Alatan</a>
+        </li>
+
+        <!-- Logout link -->
+        <li class="nav-item" style="margin-top: auto;" onclick="handleLogout()">
+          <a href="#" style="border-left-color: transparent; color: var(--danger-orange);">🚪 Log Keluar</a>
+        </li>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <p>PoliSport Book v1.0.0</p>
+        <p style="margin-top: 4px;">Politeknik Sandakan Sabah</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="main-content">
+      
+      <!-- PAGE HEADER -->
+      <header>
+        <div class="page-title">
+          <h1 id="header-title">Papan Pemuka</h1>
+          <p id="header-subtitle">Selamat Datang ke Sistem Tempahan JSKK Politeknik Sandakan Sabah.</p>
+        </div>
+        <div class="status-badge">
+          <div id="db-status-dot" class="status-dot offline"></div>
+          <span id="db-status-text">Menyambung...</span>
+        </div>
+      </header>
+
+      <!-- ==================== VIEW 1: USER DASHBOARD ==================== -->
+      <section id="view-dashboard-pengguna" class="tab-view active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Tempahan Aktif</span>
+              <span>📅</span>
+            </div>
+            <div class="stat-value" id="user-stat-active">0</div>
+            <div class="stat-label">Sedang menunggu / diluluskan</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Peralatan Dipinjam</span>
+              <span>🏸</span>
+            </div>
+            <div class="stat-value" id="user-stat-items">0</div>
+            <div class="stat-label">Berdasarkan kelulusan aktif</div>
+          </div>
+        </div>
+
+        <div style="background: var(--canvas-light); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 32px; margin-bottom: 32px;">
+          <h2 style="font-weight: 800; color: var(--dark-ink); font-size: 1.3rem;">Garis Panduan Tempahan JSKK</h2>
+          <p style="color: var(--body-muted); font-size: 0.9rem; margin-top: 10px; line-height: 1.6;">
+            Sila pastikan anda membuat tempahan kemudahan atau peralatan sekurang-kurangnya <strong>1 hari sebelum</strong> tarikh penggunaan. 
+            Semua peralatan yang diluluskan perlu dipulangkan kepada Pegawai Urusetia di Stor Sukan JSKK sebaik sahaja tamat sesi sukan.
+          </p>
+          <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="switchTab('tempahan-kemudahan')">Tempah Kemudahan Sekarang ⚽</button>
+            <button class="btn btn-secondary" onclick="switchTab('tempahan-peralatan')">Pinjam Peralatan Sukan 🏸</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 2: FACILITY BOOKINGS ==================== -->
+      <section id="view-tempahan-kemudahan" class="tab-view">
+        <h2 class="catalog-section-title">Senarai Kemudahan Sukan JSKK</h2>
+        <div class="catalog-grid" id="facilities-catalog">
+          <!-- Dynamic cards -->
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 3: EQUIPMENT BOOKINGS ==================== -->
+      <section id="view-tempahan-peralatan" class="tab-view">
+        <h2 class="catalog-section-title">Senarai Peralatan Sukan JSKK</h2>
+        <div class="catalog-grid" id="equipment-catalog">
+          <!-- Dynamic cards -->
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 4: USER HISTORY ==================== -->
+      <section id="view-sejarah-pengguna" class="tab-view">
+        <h2 class="catalog-section-title">Rekod Sejarah Tempahan Anda</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center;">Bil</th>
+                <th style="width: 15%;">ID Tempahan</th>
+                <th style="width: 25%;">Nama Peralatan / Kemudahan</th>
+                <th style="width: 15%;">Tarikh Tempahan</th>
+                <th style="width: 15%;">Sesi Pilihan</th>
+                <th style="width: 10%; text-align: center;">Status</th>
+                <th style="width: 15%; text-align: center;">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="user-bookings-body">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 5: ADMIN DASHBOARD ==================== -->
+      <section id="view-admin-dashboard" class="tab-view">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Menunggu Kelulusan</span>
+              <span>🕒</span>
+            </div>
+            <div class="stat-value" id="admin-stat-pending">0</div>
+            <div class="stat-label">Permohonan tempahan baru</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Jumlah Tempahan Aktif</span>
+              <span>📈</span>
+            </div>
+            <div class="stat-value" id="admin-stat-active">0</div>
+            <div class="stat-label">Semua kelulusan sukan aktif</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Kadar Kelulusan</span>
+              <span>🎓</span>
+            </div>
+            <div class="stat-value" id="admin-stat-rate">0%</div>
+            <div class="stat-label">Jumlah lulus vs ditolak</div>
+          </div>
+        </div>
+
+        <!-- DB Maintenance reset card -->
+        <div style="background: var(--canvas-light); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 20px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <h4 style="font-weight: 700; color: var(--dark-ink); font-size: 0.95rem;">Selenggara Sistem PoliSport</h4>
+            <p style="color: var(--body-muted); font-size: 0.8rem; margin-top: 4px;">Menetapkan semula pangkalan data kepada tetapan sampel asal (reset database/localStorage).</p>
+          </div>
+          <button class="btn btn-danger" onclick="resetSystemData()">
+            Set Semula Pangkalan Data 🔄
+          </button>
+        </div>
+
+        <h2 class="catalog-section-title">Permohonan Tempahan Pelajar & Staf</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center;">Bil</th>
+                <th style="width: 25%;">Maklumat Pemohon</th>
+                <th style="width: 25%;">Butiran Tempahan</th>
+                <th style="width: 15%;">Tarikh / Sesi</th>
+                <th style="width: 10%; text-align: center;">Status</th>
+                <th style="width: 20%; text-align: center;">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="admin-bookings-body">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 6: ADMIN INVENTORY ==================== -->
+      <section id="view-admin-inventori" class="tab-view">
+        <h2 class="catalog-section-title">Selenggara Peralatan & Kemudahan</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center;">Bil</th>
+                <th style="width: 15%;">Kod ID</th>
+                <th style="width: 10%; text-align: center;">Jenis</th>
+                <th style="width: 30%;">Nama Kemudahan / Peralatan</th>
+                <th style="width: 15%; text-align: center;">Kapasiti / Stok</th>
+                <th style="width: 15%; text-align: center;">Sedang Dipinjam</th>
+                <th style="width: 10%; text-align: center;">Kemaskini</th>
+              </tr>
+            </thead>
+            <tbody id="admin-inventory-body">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- 3. BOOKING ACTION DIALOG MODAL -->
+  <div id="booking-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="booking-modal-title">Borang Tempahan Sukan</h3>
+        <button class="modal-close-btn" onclick="closeBookingModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="booking-form" onsubmit="saveNewBooking(event)">
+          <input type="hidden" id="booking-item-id">
+          <input type="hidden" id="booking-item-type">
+          
+          <div class="form-group">
+            <label for="booking-item-name">Nama Item</label>
+            <input type="text" id="booking-item-name" class="form-control" readonly>
+          </div>
+
+          <div class="form-group" id="qty-field-container">
+            <label for="booking-qty">Kuantiti Pinjaman</label>
+            <input type="number" id="booking-qty" class="form-control" min="1" max="10" value="1">
+            <small style="color: var(--body-muted); font-size: 0.72rem; margin-top: 4px; display: block;" id="qty-limit-notice"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="booking-date">Tarikh Pilihan</label>
+            <input type="date" id="booking-date" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label for="booking-session">Sesi Pilihan</label>
+            <select id="booking-session" class="form-control" required>
+              <option value="Pagi (8:00 AM - 12:00 PM)">Pagi (8:00 AM - 12:00 PM)</option>
+              <option value="Petang (2:00 PM - 6:00 PM)">Petang (2:00 PM - 6:00 PM)</option>
+              <option value="Malam (8:00 PM - 10:00 PM)">Malam (8:00 PM - 10:00 PM)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="booking-notes">Tujuan Tempahan</label>
+            <textarea id="booking-notes" class="form-control" rows="3" placeholder="Contoh: Latihan pasukan kolej kediaman atau riadah mingguan" required></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            Hantar Permohonan Tempahan 📑
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. INVENTORY EDIT DIALOG MODAL -->
+  <div id="inventory-modal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="inventory-modal-title">Kemaskini Had Inventori</h3>
+        <button class="modal-close-btn" onclick="closeInventoryModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="inventory-form" onsubmit="saveInventoryEdit(event)">
+          <input type="hidden" id="inventory-item-id">
+          
+          <div class="form-group">
+            <label for="inventory-item-name">Nama Peralatan / Kemudahan</label>
+            <input type="text" id="inventory-item-name" class="form-control" readonly>
+          </div>
+
+          <div class="form-group">
+            <label for="inventory-qty" id="inventory-qty-label">Kuantiti Stok Maksimum</label>
+            <input type="number" id="inventory-qty" class="form-control" min="1" required>
+          </div>
+
+          <div class="form-group">
+            <label for="inventory-desc">Keterangan / Butiran Tambahan</label>
+            <input type="text" id="inventory-desc" class="form-control" placeholder="Spesifikasi alatan">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+            Kemaskini Data Stok 💾
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. SLIP TEMPAHAN / RECEIPT PREVIEW MODAL -->
+  <div id="receipt-modal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 460px;">
+      <div class="modal-header" style="background: var(--dark-ink);">
+        <h3>Slip Tempahan Sukan JSKK</h3>
+        <button class="modal-close-btn" onclick="closeReceiptModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="receipt-preview-content" class="receipt-box">
+          <!-- Dynamic receipt content inside Courier formatting -->
+        </div>
+        <div style="margin-top: 24px; display: flex; gap: 12px;">
+          <button class="btn btn-secondary" style="flex: 1; justify-content: center;" onclick="printReceipt()">
+            Cetak Slip 🖨️
+          </button>
+          <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="closeReceiptModal()">
+            Tutup Paparan ❌
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Hub -->
+  <div id="toast-container"></div>
+
+  <!-- App Core Engine -->
+  <script src="app.js"></script>
+</body>
+</html>
