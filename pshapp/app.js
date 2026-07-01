@@ -730,6 +730,15 @@ function switchTab(tabId) {
     document.getElementById('view-admin-dashboard').style.display = 'block';
     title.textContent = 'Dashboard Sistem (Penyelaras ULPL)';
     subtitle.textContent = 'Analisis statistik data keseluruhan sistem PSH dan selenggara pangkalan data.';
+    
+    // Clear sub-menu highlights when clicking the main dashboard tab, default to 'senarai'
+    const subMenuLinks = document.querySelectorAll('.nav-role-link.sub-menu-item');
+    subMenuLinks.forEach(l => l.classList.remove('active'));
+    const activeSubLink = document.getElementById('nav-ulpl-senarai');
+    if (activeSubLink) activeSubLink.classList.add('active');
+    
+    const subViewButton = document.getElementById('ulpl-btn-senarai');
+    switchULPLSubView('senarai', subViewButton);
     renderAdminDashboard();
   }
 }
@@ -2002,6 +2011,23 @@ function renderAdminDashboard() {
   // Render other sub-views to keep data synced
   renderULPLUrusetiaList();
   renderULPLAnalysis();
+}
+
+function switchULPLTab(subViewId) {
+  // First, switch to the main admin-dashboard tab
+  switchTab('admin-dashboard');
+
+  // Deactivate all sub-menu active classes in sidebar
+  const subMenuLinks = document.querySelectorAll('.nav-role-link.sub-menu-item');
+  subMenuLinks.forEach(l => l.classList.remove('active'));
+
+  // Activate the clicked sub-menu link in sidebar
+  const activeSubLink = document.getElementById(`nav-ulpl-${subViewId}`);
+  if (activeSubLink) activeSubLink.classList.add('active');
+
+  // Switch the sub-view in the dashboard
+  const subViewButton = document.getElementById(`ulpl-btn-${subViewId}`);
+  switchULPLSubView(subViewId, subViewButton);
 }
 
 function switchULPLSubView(subViewId, button) {
