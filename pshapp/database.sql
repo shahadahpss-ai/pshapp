@@ -50,9 +50,9 @@ CREATE TABLE IF NOT EXISTS gallery (
 
 -- Seed data awal bagi Kursus PSH
 INSERT IGNORE INTO courses (id, nama, kategori, tarikh, masa, lokasi, penceramah, urusetia, peserta, max_peserta, status) VALUES
-('MAT-01', 'Kursus Analisis Data dengan Excel & Statistik Asas', 'Matematik', '2026-07-11', '09:00 AM - 04:00 PM', 'Makmal Simulasi Matematik (Bilik 204)', 'Dr. Hasmadi bin Abdul Rahman', 'Puan Noor Asma binti Harun', 18, 30, 'Belum Dilaksanakan'),
+('MAT-01', 'Kursus Analisis Data dengan Excel & Statistik Asas', 'Matematik', '2026-07-11', '09:00 AM - 04:00 PM', 'Makmal Simulasi Matematik (Bilik 204)', 'Dr. Hasmadi bin Abdul Rahman', 'Puan Noor Asma binti Harun', 18, 30, 'Telah Dilaksanakan'),
 ('MAT-02', 'Kursus Pengiraan Cukai Pendapatan & Kewangan Peribadi', 'Matematik', '2026-07-18', '09:00 AM - 01:00 PM', 'Dewan Kuliah JMSK 1', 'Puan Salmah binti Kassim', 'Encik Khairul Anuar bin Salim', 25, 40, 'Belum Dilaksanakan'),
-('SCI-01', 'Kursus Bioteknologi Rumah: Pembuatan Sabun Organik', 'Sains', '2026-07-25', '08:30 AM - 04:30 PM', 'Makmal Kimia Gunaan (Makmal 1)', 'Dr. Fiona binti Gunting', 'Cik Nur Hidayah binti Razali', 12, 20, 'Belum Dilaksanakan'),
+('SCI-01', 'Kursus Bioteknologi Rumah: Pembuatan Sabun Organik', 'Sains', '2026-07-25', '08:30 AM - 04:30 PM', 'Makmal Kimia Gunaan (Makmal 1)', 'Dr. Fiona binti Gunting', 'Cik Nur Hidayah binti Razali', 12, 20, 'Telah Dilaksanakan'),
 ('SCI-02', 'Kursus Asas Sistem Penapis Air Mesra Alam', 'Sains', '2026-08-01', '09:00 AM - 01:00 PM', 'Makmal Fizik JMSK (Bilik 102)', 'Encik Elvin bin Mojikon', 'Puan Suzana binti Mat Isa', 15, 25, 'Belum Dilaksanakan'),
 ('COMP-01', 'Kursus Asas Pembangunan Laman Web HTML/CSS', 'Komputer', '2026-08-08', '09:00 AM - 05:00 PM', 'Makmal Komputer Teknologi (Makmal 4)', 'Encik Mohd Azlan bin Awang', 'Encik Ahmad Firdaus bin Zulkifli', 22, 30, 'Belum Dilaksanakan'),
 ('COMP-02', 'Kursus Keselamatan Siber & Perlindungan Data Peribadi', 'Komputer', '2026-08-15', '09:00 AM - 01:00 PM', 'Dewan Kuliah JMSK 2', 'Puan Dayang Nurul binti Mohd', 'Cik Siti Aminah binti Osman', 28, 50, 'Belum Dilaksanakan');

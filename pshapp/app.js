@@ -86,8 +86,13 @@ async function loadDatabase() {
   } else {
     pshCourses = INITIAL_PSH_COURSES.map(c => ({
       ...c,
-      status: "Belum Dilaksanakan",
-      laporan: null
+      status: (c.id === 'MAT-01' || c.id === 'SCI-01') ? "Telah Dilaksanakan" : "Belum Dilaksanakan",
+      laporan: (c.id === 'MAT-01' || c.id === 'SCI-01') ? {
+        ringkasan: "Kursus telah dilaksanakan dengan kehadiran penuh dan jayanya.",
+        feedback: "Peserta memberikan maklum balas yang amat positif berkenaan isi kandungan.",
+        cadangan: "Kemudahan dewan kuliah / makmal perlu dipertingkatkan lagi.",
+        tarikhLaporan: new Date().toLocaleDateString('ms-MY')
+      } : null
     }));
     localStorage.setItem('psh_courses', JSON.stringify(pshCourses));
   }
@@ -931,6 +936,8 @@ function renderUserHistory() {
       day: 'numeric', month: 'long', year: 'numeric'
     });
 
+    const course = pshCourses.find(c => c.id === r.courseId);
+    const isExecuted = course && course.status === "Telah Dilaksanakan";
     const hasEvaluated = pshEvaluations.some(ev => ev.registrationId === r.id);
 
     item.innerHTML = `
@@ -940,6 +947,7 @@ function renderUserHistory() {
           <span><strong>Kod:</strong> ${r.courseId}</span>
           <span><strong>Bank FPX:</strong> ${r.bank}</span>
           <span><strong>Tarikh Daftar:</strong> ${registerDate}</span>
+          <span><strong>Status:</strong> ${isExecuted ? '<span style="color: var(--success); font-weight: 700;">Selesai </span>' : '<span style="color: var(--body-subtle);">Menunggu Laksana ⏳</span>'}</span>
         </div>
       </div>
       <div style="display: flex; gap: 8px;">
@@ -950,9 +958,13 @@ function renderUserHistory() {
           <button class="btn btn-secondary" disabled style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--success-soft); color: var(--success); cursor: default; border-color: var(--success);">
             ✓ Dinilai
           </button>
-        ` : `
+        ` : isExecuted ? `
           <button class="btn btn-primary" onclick="openEvaluationModal('${r.id}')" style="padding: 6px 14px; font-size: 12px; font-weight: 700;">
             Penilaian Kursus 📋
+          </button>
+        ` : `
+          <button class="btn btn-secondary" disabled style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--disabled); color: var(--fg-disabled); cursor: not-allowed; border-color: var(--border-light);">
+            Belum Laksana ⏳
           </button>
         `}
       </div>
@@ -999,7 +1011,18 @@ function renderUserEvaluations() {
       day: 'numeric', month: 'long', year: 'numeric'
     });
 
+    const course = pshCourses.find(c => c.id === r.courseId);
+    const isExecuted = course && course.status === "Telah Dilaksanakan";
     const hasEvaluated = pshEvaluations.some(ev => ev.registrationId === r.id);
+
+    let statusText = '';
+    if (hasEvaluated) {
+      statusText = '<span style="color: var(--success); font-weight: 700;">✓ Telah Dinilai</span>';
+    } else if (isExecuted) {
+      statusText = '<span style="color: var(--brand); font-weight: 700;">Belum Dinilai</span>';
+    } else {
+      statusText = '<span style="color: var(--body-subtle);">Menunggu Pelaksanaan ⏳</span>';
+    }
 
     item.innerHTML = `
       <div>
@@ -1007,7 +1030,7 @@ function renderUserEvaluations() {
         <div style="font-size: 0.8rem; color: var(--body-subtle); margin-top: 4px; display: flex; gap: 16px; flex-wrap: wrap;">
           <span><strong>Kod:</strong> ${r.courseId}</span>
           <span><strong>Tarikh Daftar:</strong> ${registerDate}</span>
-          <span><strong>Status Penilaian:</strong> ${hasEvaluated ? '<span style="color: var(--success); font-weight: 700;">✓ Telah Dinilai</span>' : '<span style="color: var(--brand); font-weight: 700;">Belum Dinilai</span>'}</span>
+          <span><strong>Status Penilaian:</strong> ${statusText}</span>
         </div>
       </div>
       <div>
@@ -1015,9 +1038,13 @@ function renderUserEvaluations() {
           <button class="btn btn-secondary" disabled style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--success-soft); color: var(--success); cursor: default; border-color: var(--success); min-width: 130px;">
             ✓ Selesai Dinilai
           </button>
-        ` : `
+        ` : isExecuted ? `
           <button class="btn btn-primary" onclick="openEvaluationModal('${r.id}')" style="padding: 6px 14px; font-size: 12px; font-weight: 700; min-width: 130px;">
             Beri Penilaian 📋
+          </button>
+        ` : `
+          <button class="btn btn-secondary" disabled style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--disabled); color: var(--fg-disabled); cursor: not-allowed; border-color: var(--border-light); min-width: 130px;">
+            Belum Laksana ⏳
           </button>
         `}
       </div>
