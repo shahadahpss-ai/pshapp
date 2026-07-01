@@ -107,14 +107,14 @@ Pilihan navigasi baharu kini diposisikan secara tersusun terus di bawah menu tep
 ## 3. Sistem Tempahan Peralatan & Kemudahan Sukan (PoliSport Book)
 Satu sistem tempahan peralatan sukan dan kemudahan gelanggang atas talian yang dibina khusus untuk **Jabatan Sukan, Kokurikulum & Kebudayaan (JSKK), Politeknik Sandakan Sabah**.
 
-* **Alamat Laman Web (Live Netlify):** **[https://pshapp-shahadah.netlify.app/tempahansukan/](https://pshapp-shahadah.netlify.app/tempahansukan/)**
-* **Alamat Localhost (XAMPP Apache):** **[http://localhost/tempahansukan/](http://localhost/tempahansukan/)**
-* **Fail Utama (di bawah folder `/tempahansukan/`):**
-  * HTML: [index.html](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/index.html)
-  * CSS: [style.css](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/style.css)
-  * JS Logik: [app.js](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/app.js)
-  * Database Schema: [database.sql](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/database.sql)
-  * REST API: [api.php](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/api.php)
+* **Alamat Laman Web (Live Netlify):** **[https://polisport-shahadah.netlify.app](https://polisport-shahadah.netlify.app)**
+* **Alamat Localhost (XAMPP Apache):** **[http://localhost/polisport/](http://localhost/polisport/)**
+* **Fail Utama (di bawah folder `/polisport/`):**
+  * HTML: [index.html](file:///c:/Users/norshahadah/Desktop/CPCM29060107/polisport/index.html)
+  * CSS: [style.css](file:///c:/Users/norshahadah/Desktop/CPCM29060107/polisport/style.css)
+  * JS Logik: [app.js](file:///c:/Users/norshahadah/Desktop/CPCM29060107/polisport/app.js)
+  * Database Schema: [database.sql](file:///c:/Users/norshahadah/Desktop/CPCM29060107/polisport/database.sql)
+  * REST API: [api.php](file:///c:/Users/norshahadah/Desktop/CPCM29060107/polisport/api.php)
 
 ### Ciri-Ciri Utama PoliSport Book
 1. **Reka Bentuk Gaya Vodafone Red:** Antara muka premium bertemakan kelabu/hitam pekat (*deep charcoal/ink*) dengan kemasan merah scarlet korporat (`#e60000`) serta kad maklumat status membulat (radius 6px) mengikut standard *Vodafone Design System*.
