@@ -446,25 +446,113 @@
           </div>
         </div>
 
-        <!-- Master course list overview (Read-only for Admin) -->
-        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 12px;">Senarai Penawaran Kursus JMSK (Read-Only)</h3>
-        <div class="table-container">
-          <table class="attendance-table" style="font-size: 13.5px;">
-            <thead>
-              <tr>
-                <th style="width: 5%; text-align: center;">Bil</th>
-                <th style="width: 10%;">ID Kursus</th>
-                <th style="width: 32%;">Nama Kursus</th>
-                <th style="width: 13%;">Kategori</th>
-                <th style="width: 15%;">Penceramah</th>
-                <th style="width: 15%;">Pegawai Urusetia</th>
-                <th style="width: 10%; text-align: center;">Status</th>
-              </tr>
-            </thead>
-            <tbody id="admin-db-courses-body">
-              <!-- Dynamic rows -->
-            </tbody>
-          </table>
+        <!-- Penyelaras ULPL Action Sub-navigation buttons -->
+        <div class="gallery-filter-bar" style="margin-bottom: 24px; justify-content: flex-start; border-bottom: 1px solid var(--border-light); padding-bottom: 12px; gap: 8px;">
+          <button type="button" class="filter-btn active" id="ulpl-btn-senarai" onclick="switchULPLSubView('senarai', this)">Senarai Kursus 📚</button>
+          <button type="button" class="filter-btn" id="ulpl-btn-urusetia" onclick="switchULPLSubView('urusetia', this)">Urusetia Kursus 👤</button>
+          <button type="button" class="filter-btn" id="ulpl-btn-analisis" onclick="switchULPLSubView('analisis', this)">Analisis Kursus 📊</button>
+        </div>
+
+        <!-- Sub-view 1: Senarai Kursus -->
+        <div id="ulpl-view-senarai" class="ulpl-sub-view">
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 12px;">Senarai Penawaran Kursus JMSK</h3>
+          <div class="table-container">
+            <table class="attendance-table" style="font-size: 13.5px;">
+              <thead>
+                <tr>
+                  <th style="width: 5%; text-align: center;">Bil</th>
+                  <th style="width: 10%;">ID Kursus</th>
+                  <th style="width: 32%;">Nama Kursus</th>
+                  <th style="width: 13%;">Kategori</th>
+                  <th style="width: 15%;">Penceramah</th>
+                  <th style="width: 15%;">Pegawai Urusetia</th>
+                  <th style="width: 10%; text-align: center;">Status</th>
+                </tr>
+              </thead>
+              <tbody id="admin-db-courses-body">
+                <!-- Dynamic rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Sub-view 2: Urusetia Kursus -->
+        <div id="ulpl-view-urusetia" class="ulpl-sub-view" style="display: none;">
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 12px;">Penugasan Pegawai Urusetia Kursus</h3>
+          <div class="table-container">
+            <table class="attendance-table" style="font-size: 13.5px;">
+              <thead>
+                <tr>
+                  <th style="width: 5%; text-align: center;">Bil</th>
+                  <th style="width: 20%;">Nama Urusetia</th>
+                  <th style="width: 10%;">ID Kursus</th>
+                  <th style="width: 30%;">Nama Kursus Terlibat</th>
+                  <th style="width: 15%;">Tarikh Pelaksanaan</th>
+                  <th style="width: 12%; text-align: center;">Kapasiti Peserta</th>
+                  <th style="width: 10%; text-align: center;">Laporan</th>
+                </tr>
+              </thead>
+              <tbody id="ulpl-urusetia-courses-body">
+                <!-- Dynamic rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Sub-view 3: Analisis Kursus -->
+        <div id="ulpl-view-analisis" class="ulpl-sub-view" style="display: none;">
+          <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 12px;">Analisis & Purata Penilaian Kursus PSH</h3>
+          
+          <!-- Analysis Summary Cards -->
+          <div class="dashboard-grid" style="margin-bottom: 24px;">
+            <div class="stat-card" style="background: var(--neutral-primary-soft); border-left: 4px solid var(--brand);">
+              <div class="stat-header">
+                <span>Purata Rating Penceramah</span>
+                <span style="font-size: 1.2rem;">🎤</span>
+              </div>
+              <div class="stat-value" id="ulpl-avg-speaker" style="font-size: 1.8rem; color: var(--brand);">0.0 / 5.0</div>
+              <div class="stat-label" id="ulpl-avg-speaker-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+
+            <div class="stat-card" style="background: var(--neutral-primary-soft); border-left: 4px solid var(--brand);">
+              <div class="stat-header">
+                <span>Purata Rating Kandungan</span>
+                <span style="font-size: 1.2rem;">📚</span>
+              </div>
+              <div class="stat-value" id="ulpl-avg-content" style="font-size: 1.8rem; color: var(--brand);">0.0 / 5.0</div>
+              <div class="stat-label" id="ulpl-avg-content-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+
+            <div class="stat-card" style="background: var(--neutral-primary-soft); border-left: 4px solid var(--brand);">
+              <div class="stat-header">
+                <span>Purata Rating Fasiliti</span>
+                <span style="font-size: 1.2rem;">🏢</span>
+              </div>
+              <div class="stat-value" id="ulpl-avg-facilities" style="font-size: 1.8rem; color: var(--brand);">0.0 / 5.0</div>
+              <div class="stat-label" id="ulpl-avg-facilities-stars">⭐⭐⭐⭐⭐</div>
+            </div>
+          </div>
+
+          <!-- Detailed Course Evaluation Table -->
+          <div class="table-container">
+            <table class="attendance-table" style="font-size: 13.5px;">
+              <thead>
+                <tr>
+                  <th style="width: 5%; text-align: center;">Bil</th>
+                  <th style="width: 10%;">ID Kursus</th>
+                  <th style="width: 33%;">Nama Kursus</th>
+                  <th style="width: 10%; text-align: center;">Bil Penilai</th>
+                  <th style="width: 12%; text-align: center;">Penceramah</th>
+                  <th style="width: 12%; text-align: center;">Kandungan</th>
+                  <th style="width: 12%; text-align: center;">Fasiliti</th>
+                  <th style="width: 12%; text-align: center;">Skor Purata</th>
+                </tr>
+              </thead>
+              <tbody id="ulpl-analysis-body">
+                <!-- Dynamic rows -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 

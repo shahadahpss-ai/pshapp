@@ -1998,6 +1998,217 @@ function renderAdminDashboard() {
 
     tbody.appendChild(tr);
   });
+
+  // Render other sub-views to keep data synced
+  renderULPLUrusetiaList();
+  renderULPLAnalysis();
+}
+
+function switchULPLSubView(subViewId, button) {
+  // Toggle active class on sub-nav buttons
+  const buttons = document.querySelectorAll('#view-admin-dashboard .gallery-filter-bar .filter-btn');
+  buttons.forEach(b => b.classList.remove('active'));
+  if (button) button.classList.add('active');
+
+  // Toggle visibility of sub-views
+  const subViews = document.querySelectorAll('.ulpl-sub-view');
+  subViews.forEach(v => v.style.display = 'none');
+  
+  const targetView = document.getElementById(`ulpl-view-${subViewId}`);
+  if (targetView) targetView.style.display = 'block';
+
+  // Render specific view if needed
+  if (subViewId === 'senarai') {
+    renderAdminDashboard(); // This renders the standard list
+  } else if (subViewId === 'urusetia') {
+    renderULPLUrusetiaList();
+  } else if (subViewId === 'analisis') {
+    renderULPLAnalysis();
+  }
+}
+
+function renderULPLUrusetiaList() {
+  const tbody = document.getElementById('ulpl-urusetia-courses-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  if (pshCourses.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 24px;">Tiada penugasan ditemui.</td></tr>`;
+    return;
+  }
+
+  pshCourses.forEach((c, index) => {
+    const tr = document.createElement('tr');
+    
+    // Bil
+    const tdBil = document.createElement('td');
+    tdBil.style.textAlign = 'center';
+    tdBil.textContent = index + 1;
+    tr.appendChild(tdBil);
+
+    // Nama Urusetia
+    const tdUrusetia = document.createElement('td');
+    tdUrusetia.style.fontWeight = '600';
+    tdUrusetia.textContent = c.urusetia || 'Belum Ditugaskan';
+    tr.appendChild(tdUrusetia);
+
+    // ID Kursus
+    const tdID = document.createElement('td');
+    tdID.style.fontWeight = '700';
+    tdID.textContent = c.id;
+    tr.appendChild(tdID);
+
+    // Nama Kursus
+    const tdNama = document.createElement('td');
+    tdNama.textContent = c.nama;
+    tr.appendChild(tdNama);
+
+    // Tarikh
+    const tdTarikh = document.createElement('td');
+    tdTarikh.textContent = formatDateMalay(c.tarikh);
+    tr.appendChild(tdTarikh);
+
+    // Kapasiti
+    const tdCapacity = document.createElement('td');
+    tdCapacity.style.textAlign = 'center';
+    tdCapacity.textContent = `${c.peserta} / ${c.maxPeserta}`;
+    tr.appendChild(tdCapacity);
+
+    // Laporan status
+    const tdLaporan = document.createElement('td');
+    tdLaporan.style.textAlign = 'center';
+    const hasReport = c.laporan !== null;
+    tdLaporan.innerHTML = `
+      <span class="status-pill ${hasReport ? 'status-executed' : 'status-pending'}" style="font-size: 11px; padding: 4px 8px;">
+        ${hasReport ? 'Disediakan' : 'Tiada Laporan'}
+      </span>
+    `;
+    tr.appendChild(tdLaporan);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function renderULPLAnalysis() {
+  const tbody = document.getElementById('ulpl-analysis-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  let totalSpeaker = 0;
+  let totalContent = 0;
+  let totalFacilities = 0;
+  let evalCount = pshEvaluations.length;
+
+  if (evalCount > 0) {
+    pshEvaluations.forEach(ev => {
+      totalSpeaker += ev.ratingSpeaker || 0;
+      totalContent += ev.ratingContent || 0;
+      totalFacilities += ev.ratingFacilities || 0;
+    });
+
+    const avgSpeaker = totalSpeaker / evalCount;
+    const avgContent = totalContent / evalCount;
+    const avgFacilities = totalFacilities / evalCount;
+
+    document.getElementById('ulpl-avg-speaker').textContent = `${avgSpeaker.toFixed(1)} / 5.0`;
+    document.getElementById('ulpl-avg-content').textContent = `${avgContent.toFixed(1)} / 5.0`;
+    document.getElementById('ulpl-avg-facilities').textContent = `${avgFacilities.toFixed(1)} / 5.0`;
+
+    document.getElementById('ulpl-avg-speaker-stars').textContent = '⭐'.repeat(Math.round(avgSpeaker));
+    document.getElementById('ulpl-avg-content-stars').textContent = '⭐'.repeat(Math.round(avgContent));
+    document.getElementById('ulpl-avg-facilities-stars').textContent = '⭐'.repeat(Math.round(avgFacilities));
+  } else {
+    document.getElementById('ulpl-avg-speaker').textContent = `0.0 / 5.0`;
+    document.getElementById('ulpl-avg-content').textContent = `0.0 / 5.0`;
+    document.getElementById('ulpl-avg-facilities').textContent = `0.0 / 5.0`;
+    document.getElementById('ulpl-avg-speaker-stars').textContent = '⭐⭐⭐⭐⭐';
+    document.getElementById('ulpl-avg-content-stars').textContent = '⭐⭐⭐⭐⭐';
+    document.getElementById('ulpl-avg-facilities-stars').textContent = '⭐⭐⭐⭐⭐';
+  }
+
+  if (pshCourses.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 24px;">Tiada data analisis ditemui.</td></tr>`;
+    return;
+  }
+
+  pshCourses.forEach((c, index) => {
+    const courseEvals = pshEvaluations.filter(ev => ev.courseId === c.id);
+    const count = courseEvals.length;
+
+    let avgSpeaker = 0;
+    let avgContent = 0;
+    let avgFacilities = 0;
+    let avgOverall = 0;
+
+    if (count > 0) {
+      let sumSpeaker = 0;
+      let sumContent = 0;
+      let sumFacilities = 0;
+      courseEvals.forEach(ev => {
+        sumSpeaker += ev.ratingSpeaker || 0;
+        sumContent += ev.ratingContent || 0;
+        sumFacilities += ev.ratingFacilities || 0;
+      });
+      avgSpeaker = sumSpeaker / count;
+      avgContent = sumContent / count;
+      avgFacilities = sumFacilities / count;
+      avgOverall = (avgSpeaker + avgContent + avgFacilities) / 3;
+    }
+
+    const tr = document.createElement('tr');
+
+    // Bil
+    const tdBil = document.createElement('td');
+    tdBil.style.textAlign = 'center';
+    tdBil.textContent = index + 1;
+    tr.appendChild(tdBil);
+
+    // ID Kursus
+    const tdID = document.createElement('td');
+    tdID.style.fontWeight = '700';
+    tdID.textContent = c.id;
+    tr.appendChild(tdID);
+
+    // Nama Kursus
+    const tdNama = document.createElement('td');
+    tdNama.style.fontWeight = '600';
+    tdNama.textContent = c.nama;
+    tr.appendChild(tdNama);
+
+    // Bil Penilai
+    const tdCount = document.createElement('td');
+    tdCount.style.textAlign = 'center';
+    tdCount.textContent = count;
+    tr.appendChild(tdCount);
+
+    // Penceramah
+    const tdSpeaker = document.createElement('td');
+    tdSpeaker.style.textAlign = 'center';
+    tdSpeaker.textContent = count > 0 ? `${avgSpeaker.toFixed(1)} ⭐` : '-';
+    tr.appendChild(tdSpeaker);
+
+    // Kandungan
+    const tdContent = document.createElement('td');
+    tdContent.style.textAlign = 'center';
+    tdContent.textContent = count > 0 ? `${avgContent.toFixed(1)} ⭐` : '-';
+    tr.appendChild(tdContent);
+
+    // Fasiliti
+    const tdFacilities = document.createElement('td');
+    tdFacilities.style.textAlign = 'center';
+    tdFacilities.textContent = count > 0 ? `${avgFacilities.toFixed(1)} ⭐` : '-';
+    tr.appendChild(tdFacilities);
+
+    // Purata Keseluruhan
+    const tdOverall = document.createElement('td');
+    tdOverall.style.textAlign = 'center';
+    tdOverall.style.fontWeight = '700';
+    tdOverall.style.color = count > 0 ? 'var(--brand-strong)' : 'inherit';
+    tdOverall.textContent = count > 0 ? `${avgOverall.toFixed(1)} ⭐` : '-';
+    tr.appendChild(tdOverall);
+
+    tbody.appendChild(tr);
+  });
 }
 
 async function resetSystemDatabase() {
