@@ -1,4 +1,4 @@
-# Walkthrough: Portal PSH & SabahGrade
+h# Walkthrough: Portal PSH & SabahGrade
 
 Di dalam workspace anda, terdapat dua aplikasi web premium berestetika tinggi yang dibina menggunakan prinsip reka bentuk terperinci:
 
@@ -87,9 +87,10 @@ Proses penukaran kata laluan telah dipisahkan secara fizikal kepada dua skrin/la
 
 ### L. Penilaian Kursus PSH (Course Evaluation Flow)
 Pengguna kini boleh memberikan maklum balas dan penarafan bagi kursus yang telah mereka sertai:
-* **Butang Tindakan Penilaian:** Di tab *Sejarah Pendaftaran* peribadi pengguna, terdapat butang **"Penilaian Kursus 📋"** bagi setiap kursus berdaftar (di sebelah butang *"Lihat Resit"*).
+* **Tab Navigasi Khusus (Penilaian Kursus):** Satu tab khusus bertajuk **"Penilaian Kursus"** kini ditambahkan terus pada bar menu tepi (*sidebar menu*) peserta. Tab ini menyenaraikan semua kursus yang disertai oleh peserta berserta indikator status penilaian sama ada **"Belum Dinilai"** (merah) atau **"Telah Dinilai"** (hijau).
+* **Butang Tindakan Penilaian:** Di tab *Sejarah Pendaftaran* peribadi pengguna dan tab *Penilaian Kursus*, terdapat butang **"Penilaian Kursus 📋"** atau **"Beri Penilaian 📋"** bagi setiap kursus berdaftar.
 * **Modal Penilaian Kursus:** Mengklik butang ini akan memaparkan modal penilaian interaktif untuk mengumpul skor bagi 3 komponen (Penceramah, Kandungan, dan Fasiliti) menggunakan sistem penarafan bintang (1-5 ⭐) berserta satu ulasan bertulis bebas.
-* **Status "Dinilai":** Setelah penilaian dihantar, data direkodkan ke MySQL (atau LocalStorage) dan butang bertukar kepada label **"✓ Dinilai"** (berstatus kelabu/hijau & dinyahaktifkan) untuk mengelakkan penilaian berulang.
+* **Status "Dinilai" & "Selesai Dinilai":** Setelah penilaian dihantar, data direkodkan ke MySQL (atau LocalStorage) dan butang bertukar kepada label **"✓ Dinilai"** atau **"✓ Selesai Dinilai"** (berstatus kelabu/hijau & dinyahaktifkan) untuk mengelakkan penilaian berulang.
 * **Tangkapan Skrin Ujian & Pendedahan:**
   * **Modal Penilaian Terbuka:** ![Modal Penilaian](C:\Users\norshahadah\.gemini\antigravity-ide\brain\55abbdef-8296-4330-817f-e2c56dfcdb1d\evaluation_modal_open_1782860014658.png)
   * **Penilaian Selesai Dihantar:** ![Penilaian Selesai](C:\Users\norshahadah\.gemini\antigravity-ide\brain\55abbdef-8296-4330-817f-e2c56dfcdb1d\evaluation_submitted_1782860076523.png)
