@@ -101,3 +101,30 @@ Pilihan navigasi baharu kini diposisikan secara tersusun terus di bawah menu tep
 * **📚 Senarai Kursus:** Pautan sub-menu untuk membuka senarai penuh penawaran kursus JMSK berserta status.
 * **👤 Urusetia Kursus:** Pautan sub-menu untuk menyemak senarai tugasan pegawai urusetia dan status laporan.
 * **📊 Analisis Kursus:** Pautan sub-menu untuk memaparkan purata penilaian kursus (Penceramah, Kandungan, Fasiliti) yang dikira secara masa-nyata (*real-time*) daripada data undian peserta.
+
+---
+
+## 3. Sistem Tempahan Peralatan & Kemudahan Sukan (PoliSport Book)
+Satu sistem tempahan peralatan sukan dan kemudahan gelanggang atas talian yang dibina khusus untuk **Jabatan Sukan, Kokurikulum & Kebudayaan (JSKK), Politeknik Sandakan Sabah**.
+
+* **Alamat Laman Web (Live Netlify):** **[https://pshapp-shahadah.netlify.app/tempahansukan/](https://pshapp-shahadah.netlify.app/tempahansukan/)**
+* **Alamat Localhost (XAMPP Apache):** **[http://localhost/tempahansukan/](http://localhost/tempahansukan/)**
+* **Fail Utama (di bawah folder `/tempahansukan/`):**
+  * HTML: [index.html](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/index.html)
+  * CSS: [style.css](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/style.css)
+  * JS Logik: [app.js](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/app.js)
+  * Database Schema: [database.sql](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/database.sql)
+  * REST API: [api.php](file:///c:/Users/norshahadah/Desktop/CPCM29060107/tempahansukan/api.php)
+
+### Ciri-Ciri Utama PoliSport Book
+1. **Reka Bentuk Gaya Vodafone Red:** Antara muka premium bertemakan kelabu/hitam pekat (*deep charcoal/ink*) dengan kemasan merah scarlet korporat (`#e60000`) serta kad maklumat status membulat (radius 6px) mengikut standard *Vodafone Design System*.
+2. **Log Masuk Dwi-Peranan:**
+   * **Pelajar / Staf:** Log masuk menggunakan No. Kad Pengenalan sampel (cth: `050101121234` / kata laluan: `sukan123`). Boleh menyemak baki ketersediaan peralatan, menempah gelanggang/padang pada tarikh dan sesi tertentu, serta memantau status kelulusan.
+   * **Penyelaras JSKK (Admin):** Log masuk menggunakan ID `admin` (kata laluan: `admin123`). Boleh meluluskan permohonan (`Lulus`), menolak (`Tolak`), atau menyelesaikan pemulangan alatan (`Selesai/Pulang`), di samping mengurus had siling kuantiti stok inventori.
+3. **Resit Kelulusan & Kod QR:** Permohonan yang diluluskan akan mendapat butang *"Lihat Slip"* yang memaparkan slip kelulusan digital gaya resit kurier bertulis mono-jarak berserta mock Kod QR verifikasi untuk ditunjukkan di Stor Sukan JSKK.
+4. **Validasi Ketersediaan & Stok Automatik:**
+   * Sistem menghalang tempahan gelanggang bertindih (*double booking*) pada tarikh dan sesi (Pagi/Petang/Malam) yang sama.
+   * Stok peralatan (cth: raket badminton) akan berkurangan secara dinamik sebaik sahaja tempahan diluluskan, dan bertambah semula secara automatik selepas peralatan ditandakan selesai pemulangan oleh Penyelaras.
+5. **Dwi-Mod API & Offline Fallback (Hybrid):** Menggunakan API PHP (`api.php`) dan MySQL (`psh_sukan_db`) sekiranya pelayan Apache/MySQL diaktifkan, dan beralih secara automatik ke penyimpanan `localStorage` pelayar sekiranya dijalankan pada pelayan statik (offline-first).
+6. **Video Rekod Pengesahan Aliran Ujian:** Aliran log masuk pelajar, permohonan dewan, log masuk admin, dan kelulusan tempahan telah diuji secara automatik dan dirakam di:
+   * **Ujian Aliran Sukan:** ![Ujian Aliran](file:///C:/Users/norshahadah/.gemini/antigravity-ide/brain/55abbdef-8296-4330-817f-e2c56dfcdb1d/sukan_booking_flow_1782882361837.webp)
