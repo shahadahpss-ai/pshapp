@@ -639,8 +639,8 @@ function updateSidebarNavigation() {
     // Display urusetia links
     document.querySelectorAll('.role-link-urusetia').forEach(l => l.style.display = 'block');
   } else if (currentUserRole === 'admin') {
-    roleLabel.textContent = "Admin PSH";
-    userDisplay.textContent = "Sistem Pentadbir";
+    roleLabel.textContent = "Penyelaras ULPL";
+    userDisplay.textContent = "Penyelaras ULPL";
 
     // Display admin links
     document.querySelectorAll('.role-link-admin').forEach(l => l.style.display = 'block');
@@ -728,7 +728,7 @@ function switchTab(tabId) {
   } else if (tabId === 'admin-dashboard') {
     document.getElementById('nav-admin-dashboard').classList.add('active');
     document.getElementById('view-admin-dashboard').style.display = 'block';
-    title.textContent = 'Dashboard Sistem (Admin)';
+    title.textContent = 'Dashboard Sistem (Penyelaras ULPL)';
     subtitle.textContent = 'Analisis statistik data keseluruhan sistem PSH dan selenggara pangkalan data.';
     renderAdminDashboard();
   }
