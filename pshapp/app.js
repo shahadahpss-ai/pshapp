@@ -695,6 +695,12 @@ function switchTab(tabId) {
     title.textContent = 'Sejarah Pendaftaran';
     subtitle.textContent = 'Semak rekod permohonan penyertaan kursus dan resit bayaran anda.';
     renderUserHistory();
+  } else if (tabId === 'evaluations') {
+    document.getElementById('nav-evaluations').classList.add('active');
+    document.getElementById('view-evaluations').style.display = 'block';
+    title.textContent = 'Penilaian Kursus PSH';
+    subtitle.textContent = 'Sila lengkapkan penilaian untuk setiap kursus yang telah anda sertai.';
+    renderUserEvaluations();
   } else if (tabId === 'urusetia-reg') {
     document.getElementById('nav-urusetia-reg').classList.add('active');
     document.getElementById('view-admin-registrations').style.display = 'block';
@@ -947,6 +953,71 @@ function renderUserHistory() {
         ` : `
           <button class="btn btn-primary" onclick="openEvaluationModal('${r.id}')" style="padding: 6px 14px; font-size: 12px; font-weight: 700;">
             Penilaian Kursus 📋
+          </button>
+        `}
+      </div>
+    `;
+    listContainer.appendChild(item);
+  });
+}
+
+function renderUserEvaluations() {
+  const listContainer = document.getElementById('user-evaluations-list');
+  if (!listContainer) return;
+  listContainer.innerHTML = '';
+
+  // Get active user's registrations
+  const myRegs = pshRegistrations.filter(r => r.ic === currentUserIC);
+
+  if (myRegs.length === 0) {
+    listContainer.innerHTML = `
+      <div style="text-align: center; padding: 48px; border: 1px dashed var(--border-light); border-radius: var(--radius-default);">
+        <span style="font-size: 2.5rem;">📋</span>
+        <p style="margin-top: 12px; font-weight: 600; color: var(--heading);">Tiada rekod pendaftaran untuk dinilai.</p>
+        <p style="font-size: 0.8rem; color: var(--body-subtle); margin-top: 4px;">Anda hanya boleh menilai kursus yang telah anda daftarkan.</p>
+      </div>
+    `;
+    return;
+  }
+
+  myRegs.forEach(r => {
+    const item = document.createElement('div');
+    item.style.cssText = `
+      background: var(--neutral-primary);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-default);
+      padding: 18px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    `;
+
+    const registerDate = new Date(r.tarikhDaftar).toLocaleDateString('ms-MY', {
+      day: 'numeric', month: 'long', year: 'numeric'
+    });
+
+    const hasEvaluated = pshEvaluations.some(ev => ev.registrationId === r.id);
+
+    item.innerHTML = `
+      <div>
+        <h4 style="font-weight: 700; color: var(--heading); font-size: 0.95rem;">${r.courseName}</h4>
+        <div style="font-size: 0.8rem; color: var(--body-subtle); margin-top: 4px; display: flex; gap: 16px; flex-wrap: wrap;">
+          <span><strong>Kod:</strong> ${r.courseId}</span>
+          <span><strong>Tarikh Daftar:</strong> ${registerDate}</span>
+          <span><strong>Status Penilaian:</strong> ${hasEvaluated ? '<span style="color: var(--success); font-weight: 700;">✓ Telah Dinilai</span>' : '<span style="color: var(--brand); font-weight: 700;">Belum Dinilai</span>'}</span>
+        </div>
+      </div>
+      <div>
+        ${hasEvaluated ? `
+          <button class="btn btn-secondary" disabled style="padding: 6px 14px; font-size: 12px; font-weight: 700; background: var(--success-soft); color: var(--success); cursor: default; border-color: var(--success); min-width: 130px;">
+            ✓ Selesai Dinilai
+          </button>
+        ` : `
+          <button class="btn btn-primary" onclick="openEvaluationModal('${r.id}')" style="padding: 6px 14px; font-size: 12px; font-weight: 700; min-width: 130px;">
+            Beri Penilaian 📋
           </button>
         `}
       </div>
@@ -2018,6 +2089,7 @@ async function handleEvaluationSave(event) {
   closeEvaluationModal();
   showToast("Penilaian kursus anda telah berjaya dihantar! Terima kasih.");
   renderUserHistory();
+  renderUserEvaluations();
 }
 
 function showToast(message) {

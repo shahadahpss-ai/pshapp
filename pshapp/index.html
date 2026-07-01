@@ -191,6 +191,12 @@
             Sejarah Saya
           </a>
         </li>
+        <li class="nav-item nav-role-link role-link-pengguna" id="nav-evaluations" onclick="switchTab('evaluations')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            Penilaian Kursus
+          </a>
+        </li>
 
         <!-- Urusetia Links -->
         <li class="nav-item nav-role-link role-link-urusetia" id="nav-urusetia-reg" onclick="switchTab('urusetia-reg')">
@@ -286,6 +292,18 @@
           <p style="color: var(--body-subtle); font-size: 0.85rem; margin-bottom: 24px;">Berikut adalah senarai kursus PSH yang pernah anda daftarkan berserta fail bukti resit pembayaran.</p>
 
           <div id="user-history-list" class="personal-logs-list">
+            <!-- Dynamically populated by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3B: USER EVALUATIONS -->
+      <section id="view-evaluations" class="tab-view" style="display: none;">
+        <div class="panel-card" style="max-width: 650px; margin: 0 auto;">
+          <h2 style="font-size: 1.3rem; margin-bottom: 8px; color: var(--heading);">Penilaian Kursus PSH</h2>
+          <p style="color: var(--body-subtle); font-size: 0.85rem; margin-bottom: 24px;">Sila lengkapkan penilaian untuk setiap kursus yang telah anda sertai di bawah.</p>
+
+          <div id="user-evaluations-list" class="personal-logs-list">
             <!-- Dynamically populated by app.js -->
           </div>
         </div>
