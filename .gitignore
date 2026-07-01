@@ -1,0 +1,11 @@
+# System & IDE folders
+.gemini/
+.system_generated/
+.agents/
+.git/
+*.log
+
+# Windows thumbnail cache
+Thumbs.db
+ehthumbs.db
+Desktop.ini

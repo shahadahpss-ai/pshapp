@@ -1,0 +1,10 @@
+{
+  "name": "sabah-gradebook",
+  "version": "1.0.0",
+  "description": "Sistem Perekodan Markah Pelajar Sabah",
+  "main": "index.html",
+  "scripts": {
+    "dev": "powershell -ExecutionPolicy Bypass -File start_server.ps1"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Kursus Pembelajaran Sepanjang Hayat (PSH)</title>
+  <meta name="description" content="Sistem pengurusan pendaftaran dan laporan kursus PSH Jabatan Matematik, Sains & Komputer.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 1. LOGIN SCREEN -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-container">
+      <div class="login-logo-section">
+        <div class="logo-icon">”</div>
+        <h2>Portal PSH JMSK</h2>
+        <p>Sistem Pengurusan & Pendaftaran Kursus Pembelajaran Sepanjang Hayat</p>
+      </div>
+
+      <!-- Role Tabs Selection -->
+      <div class="login-tabs">
+        <button class="login-tab active" onclick="selectLoginRole('pengguna', this)">Pengguna</button>
+        <button class="login-tab" onclick="selectLoginRole('urusetia', this)">Urusetia</button>
+        <button class="login-tab" onclick="selectLoginRole('admin', this)">Admin</button>
+      </div>
+
+      <!-- Login Instructions Tip Card -->
+      <div class="login-help-card" id="login-tip">
+        <strong>Tip Log Masuk Pengguna:</strong><br>
+        Masukkan Nombor Kad Pengenalan anda (12 digit) untuk mendaftar atau menyemak sejarah penyertaan kursus anda.
+      </div>
+
+      <!-- Credentials Form -->
+      <form id="login-form" onsubmit="handleLoginSubmit(event)">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <!-- User IC field -->
+          <div class="form-group" id="login-group-ic">
+            <label for="login-ic">Nombor Kad Pengenalan</label>
+            <input type="text" id="login-ic" class="form-input" placeholder="Masukkan 12 digit KP (cth: 080412125131)" maxlength="12">
+          </div>
+
+          <!-- Standard Username field (hidden for user) -->
+          <div class="form-group" id="login-group-username" style="display: none;">
+            <label for="login-username">Nama Pengguna (Username)</label>
+            <input type="text" id="login-username" class="form-input" placeholder="Masukkan username">
+          </div>
+
+          <!-- Password field (now visible for all roles) -->
+          <div class="form-group" id="login-group-password">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label for="login-password" style="margin-bottom: 0;">Kata Laluan (Password)</label>
+              <a href="#" id="login-forgot-link" onclick="toggleForgotPassword(true)" style="color: var(--brand); font-size: 0.78rem; font-weight: 600; text-decoration: none;">Lupa kata laluan?</a>
+            </div>
+            <input type="password" id="login-password" class="form-input" placeholder="Masukkan kata laluan">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="padding: 14px; font-size: 15px; width: 100%;">
+            Log Masuk Sistem
+          </button>
+
+          <!-- Toggle link to register account (Visible only for Pengguna role) -->
+          <div style="text-align: center; margin-top: 8px;" id="login-register-link-container">
+            <a href="#" onclick="toggleLoginRegister(false)" style="color: var(--brand); font-weight: 600; font-size: 0.85rem; text-decoration: none;">
+              Belum mempunyai akaun? Daftar Akaun Baru
+            </a>
+          </div>
+        </div>
+      </form>
+
+      <!-- Account Registration Form (Hidden by default) -->
+      <form id="register-form" onsubmit="handleRegisterSubmit(event)" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="form-group">
+            <label for="reg-nama">Nama Penuh (Mengikut Kad Pengenalan)</label>
+            <input type="text" id="reg-nama" class="form-input" placeholder="Masukkan nama penuh anda" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-ic">Nombor Kad Pengenalan</label>
+            <input type="text" id="reg-ic" class="form-input" placeholder="Masukkan 12 digit KP (cth: 080412125131)" maxlength="12" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-tel">Nombor Telefon</label>
+            <input type="text" id="reg-tel" class="form-input" placeholder="Masukkan no. telefon (cth: 012-3456789)" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-emel">Alamat Emel</label>
+            <input type="email" id="reg-emel" class="form-input" placeholder="Masukkan emel anda (cth: ali@example.com)" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Kata Laluan (Password)</label>
+            <input type="password" id="reg-password" class="form-input" placeholder="Cipta kata laluan akaun anda" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="padding: 14px; font-size: 15px; width: 100%;">
+            Daftar Akaun Baru 📝
+          </button>
+          <div style="text-align: center; margin-top: 8px;">
+            <a href="#" onclick="toggleLoginRegister(true)" style="color: var(--brand); font-weight: 600; font-size: 0.85rem; text-decoration: none;">
+              Sudah mempunyai akaun? Log Masuk Di Sini
+            </a>
+          </div>
+        </div>
+      </form>
+
+      <!-- Step 1: Forgot Password Identity Verification Form (Hidden by default) -->
+      <form id="forgot-verify-form" onsubmit="handleForgotVerifySubmit(event)" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="text-align: center; margin-bottom: 8px;">
+            <h4 style="font-weight: 800; text-transform: uppercase; color: var(--brand); font-size: 0.95rem; letter-spacing: -0.5px;">Pengesahan Maklumat Akaun 🔎</h4>
+            <p style="font-size: 0.8rem; color: var(--body-subtle); margin-top: 4px;">Sila sahkan maklumat diri anda untuk memulakan penetapan semula kata laluan.</p>
+          </div>
+          <div class="form-group">
+            <label for="forgot-ic">Nombor Kad Pengenalan</label>
+            <input type="text" id="forgot-ic" class="form-input" placeholder="12 digit KP (cth: 080412125131)" maxlength="12" required>
+          </div>
+          <div class="form-group">
+            <label for="forgot-tel">Nombor Telefon Berdaftar</label>
+            <input type="text" id="forgot-tel" class="form-input" placeholder="Masukkan no. telefon berdaftar" required>
+          </div>
+          <div class="form-group">
+            <label for="forgot-emel">Alamat Emel Berdaftar</label>
+            <input type="email" id="forgot-emel" class="form-input" placeholder="Masukkan emel berdaftar" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="padding: 14px; font-size: 15px; width: 100%;">
+            Sahkan Maklumat Diri 🔎
+          </button>
+          <div style="text-align: center; margin-top: 8px;">
+            <a href="#" onclick="toggleForgotPassword(false)" style="color: var(--brand); font-weight: 600; font-size: 0.85rem; text-decoration: none;">
+              Kembali Ke Log Masuk
+            </a>
+          </div>
+        </div>
+      </form>
+
+      <!-- Step 2: New Password Creation Form (Hidden by default) -->
+      <form id="forgot-reset-form" onsubmit="handleForgotResetSubmit(event)" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="text-align: center; margin-bottom: 8px;">
+            <h4 style="font-weight: 800; text-transform: uppercase; color: var(--brand); font-size: 0.95rem; letter-spacing: -0.5px;">Cipta Kata Laluan Baharu 🔑</h4>
+            <p style="font-size: 0.8rem; color: var(--body-subtle); margin-top: 4px;">Maklumat anda disahkan! Sila masukkan kata laluan baharu anda di bawah.</p>
+          </div>
+          <div class="form-group">
+            <label for="forgot-new-password">Kata Laluan Baharu</label>
+            <input type="password" id="forgot-new-password" class="form-input" placeholder="Masukkan kata laluan baharu" required>
+          </div>
+          <div class="form-group">
+            <label for="forgot-confirm-password">Sahkan Kata Laluan Baharu</label>
+            <input type="password" id="forgot-confirm-password" class="form-input" placeholder="Sahkan kata laluan baharu" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="padding: 14px; font-size: 15px; width: 100%;">
+            Simpan Kata Laluan Baharu 🔑
+          </button>
+          <div style="text-align: center; margin-top: 8px;">
+            <a href="#" onclick="toggleForgotPassword(false)" style="color: var(--brand); font-weight: 600; font-size: 0.85rem; text-decoration: none;">
+              Batal & Kembali Ke Log Masuk
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MAIN APPLICATION CONTAINER -->
+  <div id="app-container" class="app-container" style="display: none;">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo-section">
+        <div class="logo-icon">”</div>
+        <span class="logo-text" id="sidebar-role-label">Portal PSH</span>
+      </div>
+      
+      <nav class="nav-links">
+        <!-- Pengguna Links -->
+        <li class="nav-item nav-role-link role-link-pengguna" id="nav-courses" onclick="switchTab('courses')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Maklumat Kursus
+          </a>
+        </li>
+        <li class="nav-item nav-role-link role-link-pengguna" id="nav-gallery" onclick="switchTab('gallery')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Galeri PSH
+          </a>
+        </li>
+        <li class="nav-item nav-role-link role-link-pengguna" id="nav-user-history" onclick="switchTab('user-history')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Sejarah Saya
+          </a>
+        </li>
+
+        <!-- Urusetia Links -->
+        <li class="nav-item nav-role-link role-link-urusetia" id="nav-urusetia-reg" onclick="switchTab('urusetia-reg')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+            Urusetia: Pendaftaran
+          </a>
+        </li>
+        <li class="nav-item nav-role-link role-link-urusetia" id="nav-urusetia-rep" onclick="switchTab('urusetia-rep')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            Urusetia: Laporan PSH
+          </a>
+        </li>
+
+        <!-- Urusetia Course Manager Link -->
+        <li class="nav-item nav-role-link role-link-urusetia" id="nav-urusetia-courses" onclick="switchTab('urusetia-courses')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            Urus Rekod Kursus
+          </a>
+        </li>
+
+        <!-- Admin Links -->
+        <li class="nav-item nav-role-link role-link-admin" id="nav-admin-dashboard" onclick="switchTab('admin-dashboard')">
+          <a href="#">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+            Dashboard Sistem (Admin)
+          </a>
+        </li>
+
+        <!-- Universal Logout -->
+        <li class="nav-item" onclick="performLogout()" style="margin-top: auto;">
+          <a href="#" style="color: var(--danger);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Log Keluar
+          </a>
+        </li>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <p>Jabatan Matematik, Sains & Komputer</p>
+        <p style="margin-top: 2px;" id="sidebar-user-display">Pelawat</p>
+        <div style="font-size: 11px; margin-top: 8px; display: flex; align-items: center; gap: 6px; justify-content: center;" id="db-connection-badge">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block;"></span>
+          <span>Memeriksa sambungan...</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- HEADER -->
+      <header>
+        <div class="page-title">
+          <h1 id="app-title">Maklumat Kursus PSH</h1>
+          <p id="app-subtitle">Daftar dan sertai kursus Pembelajaran Sepanjang Hayat yang dianjurkan oleh JMSK.</p>
+        </div>
+        <div class="header-actions" id="urusetia-header-actions" style="display: none;">
+          <button class="btn btn-primary" onclick="openCourseFormModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Tambah Kursus Baru
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: USER COURSES LIST (GROUPED BY MONTH) -->
+      <section id="view-courses" class="tab-view">
+        <div id="courses-container">
+          <!-- Dynamically populated by app.js with Month Sections -->
+        </div>
+      </section>
+
+      <!-- VIEW 2: PSH GALLERY -->
+      <section id="view-gallery" class="tab-view" style="display: none;">
+        <div class="gallery-filter-bar">
+          <button class="filter-btn active" onclick="filterGallery('Semua', this)">Semua Kategori</button>
+          <button class="filter-btn" onclick="filterGallery('Matematik', this)">Matematik</button>
+          <button class="filter-btn" onclick="filterGallery('Sains', this)">Sains</button>
+          <button class="filter-btn" onclick="filterGallery('Komputer', this)">Komputer</button>
+        </div>
+
+        <div class="gallery-grid" id="gallery-container">
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: USER PERSONAL HISTORY -->
+      <section id="view-user-history" class="tab-view" style="display: none;">
+        <div class="panel-card" style="max-width: 650px; margin: 0 auto;">
+          <h2 style="font-size: 1.3rem; margin-bottom: 8px; color: var(--heading);">Log Rekod Pendaftaran Anda</h2>
+          <p style="color: var(--body-subtle); font-size: 0.85rem; margin-bottom: 24px;">Berikut adalah senarai kursus PSH yang pernah anda daftarkan berserta fail bukti resit pembayaran.</p>
+
+          <div id="user-history-list" class="personal-logs-list">
+            <!-- Dynamically populated by app.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: SPECIAL REGISTRATION PAGE -->
+      <section id="view-register-page" class="tab-view" style="display: none;">
+        <div class="panel-card" style="max-width: 650px; margin: 0 auto;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;">
+            <button class="btn btn-secondary" onclick="switchTab('courses')" style="padding: 8px 16px;">← Kembali</button>
+            <h2 style="font-size: 1.2rem; font-weight: 700; color: var(--heading); margin: 0; line-height: 1.4;" id="page-reg-course-title">Nama Kursus</h2>
+          </div>
+          
+          <div style="background: var(--brand-softer); border: 1px solid var(--border-brand-subtle); border-radius: var(--radius-default); padding: 16px; margin-bottom: 24px;">
+            <p style="font-size: 0.85rem; color: var(--body); line-height: 1.6;" id="page-reg-course-meta">Maklumat lokasi & penceramah...</p>
+            <p style="font-size: 1.1rem; font-weight: 800; color: var(--brand); margin-top: 8px;">Kadar Yuran: RM 10.00</p>
+          </div>
+
+          <form id="page-register-form" onsubmit="submitPSHRegistration(event)">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div class="form-group">
+                <label for="page-reg-nama">Nama Penuh Peserta</label>
+                <input type="text" id="page-reg-nama" class="form-input" required placeholder="Masukkan nama penuh anda">
+              </div>
+
+              <div class="form-group">
+                <label for="page-reg-ic">Nombor Kad Pengenalan</label>
+                <input type="text" id="page-reg-ic" class="form-input" required readonly style="background: var(--disabled); color: var(--fg-disabled);">
+              </div>
+
+              <div class="form-group">
+                <label for="page-reg-tel">No. Telefon Bimbit</label>
+                <input type="tel" id="page-reg-tel" class="form-input" required placeholder="Contoh: 0134567890">
+              </div>
+
+              <div class="form-group">
+                <label for="page-reg-emel">Alamat Emel</label>
+                <input type="email" id="page-reg-emel" class="form-input" required placeholder="Contoh: name@email.com">
+              </div>
+
+              <div class="form-group">
+                <label for="page-reg-bank">Pilih Saluran FPX Pembayaran Yuran (RM10)</label>
+                <select id="page-reg-bank" class="form-input" required>
+                  <option value="Maybank2u">Maybank2u</option>
+                  <option value="CIMB Clicks">CIMB Clicks</option>
+                  <option value="Public Bank">Public Bank</option>
+                  <option value="RHB Now">RHB Now</option>
+                  <option value="Bank Islam">Bank Islam (FPX)</option>
+                  <option value="AmBank">AmBank</option>
+                  <option value="Hong Leong Bank">Hong Leong Connect</option>
+                </select>
+              </div>
+
+              <!-- Upload Receipt Section -->
+              <div class="form-group">
+                <label>Muat Naik Resit Pembayaran (Upload Receipt)</label>
+                <div style="background: var(--neutral-primary-soft); border: 2px dashed var(--brand); border-radius: var(--radius-default); padding: 24px; text-align: center; cursor: pointer; position: relative;" id="page-upload-area" onclick="triggerPageReceiptInput()">
+                  <span style="font-size: 2.2rem;" id="page-receipt-icon">📄</span>
+                  <p style="font-size: 0.9rem; color: var(--heading); font-weight: 600; margin-top: 8px;" id="page-upload-status-text">
+                    Klik di sini untuk memilih fail resit (PDF, PNG, JPG)
+                  </p>
+                  <p style="font-size: 0.75rem; color: var(--body-subtle); margin-top: 4px;" id="page-receipt-filename-display">Tiada fail terpilih</p>
+                  <input type="file" id="page-receipt-file" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" onchange="handlePageReceiptFileSelect(event)">
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="switchTab('courses')">Batal</button>
+                <button type="submit" class="btn btn-primary">Hantar Pendaftaran & Sahkan Bayaran</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- VIEW 5: URUSETIA COURSE MANAGER VIEW -->
+      <section id="view-urusetia-courses" class="tab-view" style="display: none;">
+        <div class="table-container">
+          <table class="attendance-table" style="font-size: 13.5px;">
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center;">Bil</th>
+                <th style="width: 10%;">ID Kursus</th>
+                <th style="width: 30%;">Nama Kursus</th>
+                <th style="width: 10%;">Kategori</th>
+                <th style="width: 12%;">Tarikh Tawaran</th>
+                <th style="width: 13%;">Penceramah</th>
+                <th style="width: 10%;">Kapasiti</th>
+                <th style="width: 10%; text-align: center;">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="urusetia-courses-body">
+              <!-- Dynamically populated by app.js -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 8: ADMIN MASTER DASHBOARD -->
+      <section id="view-admin-dashboard" class="tab-view" style="display: none;">
+        <div class="dashboard-grid" style="margin-bottom: 32px;">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Jumlah Kursus Ditawarkan</span>
+              <div class="stat-icon">📚</div>
+            </div>
+            <div class="stat-value" id="admin-db-total-courses">0</div>
+            <div class="stat-label">Jumlah keseluruhan subjek</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Jumlah Peserta Berdaftar</span>
+              <div class="stat-icon">👥</div>
+            </div>
+            <div class="stat-value" id="admin-db-total-peserta">0</div>
+            <div class="stat-label">Merentasi semua kategori</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Laporan Pelaksanaan</span>
+              <div class="stat-icon">📄</div>
+            </div>
+            <div class="stat-value" id="admin-db-total-reports">0</div>
+            <div class="stat-label">Sesi selesai dilaksanakan</div>
+          </div>
+        </div>
+
+        <!-- System Reset Action Card -->
+        <div style="background: var(--neutral-primary); border: 1px solid var(--border-light); border-radius: var(--radius-default); padding: 24px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <h4 style="font-weight: 700; color: var(--heading); font-size: 0.95rem;">Tindakan Selenggara Sistem PSH</h4>
+            <p style="color: var(--body-subtle); font-size: 0.8rem; margin-top: 4px;">Menetapkan semula pangkalan data kepada data contoh asal (reset localStorage).</p>
+          </div>
+          <div>
+            <button class="btn btn-secondary" onclick="resetSystemDatabase()" style="background: var(--danger-soft); color: var(--danger-strong); font-weight: 700;">
+              Set Semula Pangkalan Data 🔄
+            </button>
+          </div>
+        </div>
+
+        <!-- Master course list overview (Read-only for Admin) -->
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 12px;">Senarai Penawaran Kursus JMSK (Read-Only)</h3>
+        <div class="table-container">
+          <table class="attendance-table" style="font-size: 13.5px;">
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center;">Bil</th>
+                <th style="width: 10%;">ID Kursus</th>
+                <th style="width: 32%;">Nama Kursus</th>
+                <th style="width: 13%;">Kategori</th>
+                <th style="width: 15%;">Penceramah</th>
+                <th style="width: 15%;">Pegawai Urusetia</th>
+                <th style="width: 10%; text-align: center;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="admin-db-courses-body">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 6: URUSETIA REGISTRATIONS MANAGER -->
+      <section id="view-admin-registrations" class="tab-view" style="display: none;">
+        <div class="dashboard-grid" style="margin-bottom: 32px;">
+          <!-- Card 1: Kursus Belum Dilaksanakan -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Kursus Belum Dilaksanakan</span>
+              <div class="stat-icon">🕒</div>
+            </div>
+            <div class="stat-value" id="urusetia-stat-pending-courses">0</div>
+            <div class="stat-label">Bilangan sesi belum selesai</div>
+          </div>
+          
+          <!-- Card 2: Jumlah Peserta Kursus Dilaksanakan -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Peserta (Kursus Dilaksanakan)</span>
+              <div class="stat-icon">👥</div>
+            </div>
+            <div class="stat-value" id="urusetia-stat-executed-participants">0</div>
+            <div class="stat-label">Kehadiran sesi selesai dilaksanakan</div>
+          </div>
+
+          <!-- Card 3: Jumlah Kutipan Yuran Hari Ini -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Jumlah Yuran Terkumpul</span>
+              <div class="stat-icon">💰</div>
+            </div>
+            <div class="stat-value" id="urusetia-stat-total-fees">RM 0.00</div>
+            <div class="stat-label">Kutipan diperoleh setakat hari ini</div>
+          </div>
+        </div>
+
+        <!-- Course Sub-Tabs Grouped by Month -->
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--heading); margin-bottom: 12px;">Pendaftaran Mengikut Kursus yang Ditawarkan</h3>
+        <div class="gallery-filter-bar" id="admin-course-tabs" style="margin-bottom: 24px; gap: 8px;">
+          <!-- Dynamically generated course buttons grouped by month -->
+        </div>
+
+        <!-- Active Course Tab Summary & Fee Collected -->
+        <div style="background: var(--neutral-primary); border: 1px solid var(--border-light); border-radius: var(--radius-default); padding: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;" id="admin-active-tab-summary">
+          <div>
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--heading);" id="admin-summary-course-title">Semua Pendaftaran Kursus</h3>
+            <p style="font-size: 0.85rem; color: var(--body-subtle);" id="admin-summary-course-desc">Senarai penuh pendaftaran merentasi semua kategori subjek.</p>
+          </div>
+          <div style="display: flex; gap: 24px;">
+            <div style="text-align: right;">
+              <span style="font-size: 0.8rem; color: var(--body-subtle); font-weight: 600;">Jumlah Peserta:</span>
+              <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--brand);" id="admin-summary-total-peserta">0</h4>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 0.8rem; color: var(--body-subtle); font-weight: 600;">Kutipan Yuran:</span>
+              <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--brand);" id="admin-summary-total-kutipan">RM 0.00</h4>
+            </div>
+          </div>
+        </div>
+
+        <!-- Master registrations list table -->
+        <div class="table-container">
+          <table class="attendance-table" style="font-size: 13px;">
+            <thead>
+              <tr>
+                <th style="width: 5%; text-align: center;">Bil</th>
+                <th style="width: 22%;">Nama & No. KP</th>
+                <th style="width: 18%;">Butiran Hubungi</th>
+                <th style="width: 25%;">Kursus Terpilih</th>
+                <th style="width: 12%;">Bank Pilihan</th>
+                <th style="width: 13%; text-align: center;">Resit Bayaran</th>
+                <th style="width: 5%; text-align: center;">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="admin-registrations-body">
+              <!-- Dynamic rows -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 7: URUSETIA COURSE REPORT MANAGER -->
+      <section id="view-urusetia-reports" class="tab-view" style="display: none;">
+        <p style="color: var(--body-subtle); font-size: 0.9rem; margin-bottom: 24px;">Kemaskini status pelaksanaan kursus dan sediakan ulasan laporan bertulis setelah kursus berjaya diselesaikan.</p>
+        
+        <div class="courses-grid" id="urusetia-reports-container">
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="footer">
+        <p>Portal Sistem Perekodan Kursus PSH JMSK • Reka bentuk premium Pinterest-style</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- COURSE ADD/EDIT MODAL (ADMIN) -->
+  <div class="modal-overlay" id="course-form-modal">
+    <div class="modal-container" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="course-modal-title">Daftar Kursus PSH Baru</h3>
+        <button class="modal-close" onclick="closeCourseFormModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 420px; overflow-y: auto;">
+        <form id="course-editor-form" onsubmit="handleCourseSave(event)">
+          <input type="hidden" id="editor-course-id-hidden">
+          
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="form-group">
+              <label for="editor-course-id">ID Kursus</label>
+              <input type="text" id="editor-course-id" class="form-input" required placeholder="Cth: COMP-03">
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-nama">Nama Kursus Penuh</label>
+              <input type="text" id="editor-course-nama" class="form-input" required placeholder="Masukkan nama kursus">
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-kategori">Kategori Jabatan</label>
+              <select id="editor-course-kategori" class="form-input" required>
+                <option value="Matematik">Matematik</option>
+                <option value="Sains">Sains</option>
+                <option value="Komputer">Komputer</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-tarikh">Tarikh Pelaksanaan</label>
+              <input type="date" id="editor-course-tarikh" class="form-input" required min="2026-01-01" max="2026-12-31">
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-masa">Waktu / Masa</label>
+              <input type="text" id="editor-course-masa" class="form-input" required placeholder="Cth: 09:00 AM - 04:00 PM">
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-lokasi">Lokasi / Bilik Makmal</label>
+              <input type="text" id="editor-course-lokasi" class="form-input" required placeholder="Cth: Makmal Komputer 3">
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-penceramah">Nama Penceramah</label>
+              <input type="text" id="editor-course-penceramah" class="form-input" required placeholder="Cth: Dr. Ahmad bin Ali">
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-urusetia">Nama Urusetia Bertugas</label>
+              <input type="text" id="editor-course-urusetia" class="form-input" required placeholder="Cth: Puan Salmah binti Kassim">
+            </div>
+
+            <div class="form-group">
+              <label for="editor-course-max">Kapasiti Maksimum Peserta</label>
+              <input type="number" id="editor-course-max" class="form-input" required min="5" max="200" value="30">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="padding: 16px 32px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border-light);">
+        <button type="button" class="btn btn-secondary" onclick="closeCourseFormModal()">Batal</button>
+        <button type="submit" form="course-editor-form" class="btn btn-primary">Simpan Kursus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COURSE REPORT WRITER MODAL (URUSETIA) -->
+  <div class="modal-overlay" id="report-form-modal">
+    <div class="modal-container" style="max-width: 550px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Penyediaan Laporan Kursus PSH</h3>
+        <button class="modal-close" onclick="closeReportModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 420px; overflow-y: auto;">
+        <div class="report-summary-box">
+          <h4 style="font-weight: 700; color: var(--brand-strong);" id="report-course-title">Nama Kursus</h4>
+          <p id="report-course-meta" style="margin-top: 4px; font-size: 0.8rem; color: var(--body-subtle);"></p>
+        </div>
+
+        <form id="course-report-form" onsubmit="handleReportSave(event)">
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="form-group">
+              <label for="report-status">Status Pelaksanaan</label>
+              <select id="report-status" class="form-input" required>
+                <option value="Belum Dilaksanakan">Belum Dilaksanakan</option>
+                <option value="Telah Dilaksanakan">Telah Dilaksanakan (Selesai)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="report-ringkasan">Ringkasan Aktiviti / Pengisian Kursus</label>
+              <textarea id="report-ringkasan" class="form-input" style="height: 80px; resize: vertical; padding: 10px;" required placeholder="Nyatakan aktiviti pembelajaran yang telah dijalankan semasa kursus..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="report-feedback">Maklum Balas Peserta</label>
+              <textarea id="report-feedback" class="form-input" style="height: 60px; resize: vertical; padding: 10px;" required placeholder="Maklum balas dari maklum borang maklum balas peserta..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="report-cadangan">Cadangan Penambahbaikan</label>
+              <textarea id="report-cadangan" class="form-input" style="height: 60px; resize: vertical; padding: 10px;" required placeholder="Cadangan penambahbaikan untuk sesi kursus akan datang..."></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="padding: 16px 32px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border-light);">
+        <button type="button" class="btn btn-secondary" onclick="closeReportModal()">Batal</button>
+        <button type="button" class="btn btn-secondary" id="report-btn-print" onclick="triggerReportPrint()" style="background: var(--brand-accent-softer); color: var(--brand-accent); font-weight: 700;">Cetak 📄</button>
+        <button type="submit" form="course-report-form" class="btn btn-primary">Simpan Laporan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIPT PREVIEW MODAL -->
+  <div class="modal-overlay" id="receipt-preview-modal">
+    <div class="modal-container" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="receipt-preview-title">Resit Pembayaran</h3>
+        <button class="modal-close" onclick="closeReceiptPreviewModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 24px;">
+        <div id="receipt-image-container" style="display: none; max-height: 400px; overflow-y: auto; background: #fafafa; border-radius: 12px; padding: 12px; border: 1px solid var(--border-light);">
+          <img id="receipt-preview-img" src="" alt="Resit Bayaran" style="max-width: 100%; height: auto; border-radius: 8px;">
+        </div>
+        
+        <div id="receipt-fallback-container" style="display: none; padding: 40px 20px; background: var(--neutral-primary-soft); border-radius: 12px; border: 1px dashed var(--border-brand);">
+          <span style="font-size: 3rem;">📄</span>
+          <h4 style="margin-top: 12px; color: var(--heading);" id="receipt-preview-filename">fail_resit.pdf</h4>
+          <p style="font-size: 0.85rem; color: var(--body-subtle); margin-top: 8px; margin-bottom: 24px;">Dokumen ini dalam format PDF/fail. Anda boleh memuat turun fail ini untuk melihatnya.</p>
+          <a id="receipt-download-btn" href="#" class="btn btn-primary" download="resit_bayaran">Muat Turun Fail</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COURSE EVALUATION MODAL -->
+  <div class="modal-overlay" id="evaluation-modal">
+    <div class="modal-container" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Penilaian Kursus PSH</h3>
+        <button class="modal-close" onclick="closeEvaluationModal()">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 420px; overflow-y: auto;">
+        <div class="report-summary-box" style="margin-bottom: 20px;">
+          <h4 style="font-weight: 700; color: var(--brand);" id="eval-course-title">Nama Kursus</h4>
+          <p id="eval-course-meta" style="margin-top: 4px; font-size: 0.8rem; color: var(--body-subtle);"></p>
+        </div>
+
+        <form id="course-evaluation-form" onsubmit="handleEvaluationSave(event)">
+          <input type="hidden" id="eval-reg-id">
+          <input type="hidden" id="eval-course-id">
+          
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div class="form-group">
+              <label for="eval-rating-speaker">Penyampaian Penceramah (1-5)</label>
+              <select id="eval-rating-speaker" class="form-input" required>
+                <option value="5">⭐⭐⭐⭐⭐ (Sangat Cemerlang)</option>
+                <option value="4">⭐⭐⭐⭐ (Baik)</option>
+                <option value="3">⭐⭐⭐ (Memuaskan)</option>
+                <option value="2">⭐⭐ (Lemah)</option>
+                <option value="1">⭐ (Sangat Lemah)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="eval-rating-content">Kandungan Kursus & Nota (1-5)</label>
+              <select id="eval-rating-content" class="form-input" required>
+                <option value="5">⭐⭐⭐⭐⭐ (Sangat Cemerlang)</option>
+                <option value="4">⭐⭐⭐⭐ (Baik)</option>
+                <option value="3">⭐⭐⭐ (Memuaskan)</option>
+                <option value="2">⭐⭐ (Lemah)</option>
+                <option value="1">⭐ (Sangat Lemah)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="eval-rating-facilities">Kemudahan Makmal & Lokasi (1-5)</label>
+              <select id="eval-rating-facilities" class="form-input" required>
+                <option value="5">⭐⭐⭐⭐⭐ (Sangat Cemerlang)</option>
+                <option value="4">⭐⭐⭐⭐ (Baik)</option>
+                <option value="3">⭐⭐⭐ (Memuaskan)</option>
+                <option value="2">⭐⭐ (Lemah)</option>
+                <option value="1">⭐ (Sangat Lemah)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="eval-feedback">Ulasan & Cadangan Penambahbaikan</label>
+              <textarea id="eval-feedback" class="form-input" style="height: 80px; resize: vertical; padding: 10px;" required placeholder="Berikan komen atau maklum balas anda untuk membantu meningkatkan kualiti kursus kami..."></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="padding: 16px 32px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border-light);">
+        <button type="button" class="btn btn-secondary" onclick="closeEvaluationModal()">Batal</button>
+        <button type="submit" form="course-evaluation-form" class="btn btn-primary">Hantar Penilaian 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-notification" id="psh-toast">
+    <div class="toast-message" id="psh-toast-message">Pendaftaran berjaya direkodkan!</div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="pshData.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
