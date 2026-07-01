@@ -95,8 +95,9 @@ Pengguna kini boleh memberikan maklum balas dan penarafan bagi kursus yang telah
   * **Modal Penilaian Terbuka:** ![Modal Penilaian](C:\Users\norshahadah\.gemini\antigravity-ide\brain\55abbdef-8296-4330-817f-e2c56dfcdb1d\evaluation_modal_open_1782860014658.png)
   * **Penilaian Selesai Dihantar:** ![Penilaian Selesai](C:\Users\norshahadah\.gemini\antigravity-ide\brain\55abbdef-8296-4330-817f-e2c56dfcdb1d\evaluation_submitted_1782860076523.png)
 
-### M. Sub-Navigation Dashboard Penyelaras ULPL
-Satu bar sub-tab navigasi (mengikut gaya Vodafone pill filter) telah ditambah ke dalam Papan Pemuka Penyelaras ULPL untuk memisahkan paparan maklumat secara tersusun:
-1. **Butang Senarai Kursus 📚:** Menampilkan senarai penuh penawaran kursus di bawah JMSK berserta status pelaksanaan.
-2. **Butang Urusetia Kursus 👤:** Memaparkan penugasan rasmi pegawai urusetia bagi setiap kursus berserta status penyediaan laporan.
-3. **Butang Analisis Kursus 📊:** Menyediakan ringkasan eksekutif bagi skor purata penarafan kursus (Purata Penceramah, Purata Kandungan, dan Purata Fasiliti) yang dikira secara masa-nyata (*real-time*) daripada semua penilaian peserta berserta jadual analisis terperinci bagi setiap subjek.
+### M. Integrasi Sub-Menu Penyelaras ULPL pada Sidebar Navigasi
+Pilihan navigasi baharu kini diposisikan secara tersusun terus di bawah menu tepi (*sidebar navigation menu*) Penyelaras ULPL sebagai sub-menu bertapis:
+* **Dashboard Utama:** Pautan navigasi induk untuk memaparkan statistik ringkasan dan kad selenggara sistem.
+* **📚 Senarai Kursus:** Pautan sub-menu untuk membuka senarai penuh penawaran kursus JMSK berserta status.
+* **👤 Urusetia Kursus:** Pautan sub-menu untuk menyemak senarai tugasan pegawai urusetia dan status laporan.
+* **📊 Analisis Kursus:** Pautan sub-menu untuk memaparkan purata penilaian kursus (Penceramah, Kandungan, Fasiliti) yang dikira secara masa-nyata (*real-time*) daripada data undian peserta.
